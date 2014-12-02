@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+# source 'https://production.cf.rubygems.org'
 ruby '2.1.1'
 
 gem 'bootstrap-sass'
@@ -24,6 +25,7 @@ end
 
 group :test do
   gem 'database_cleaner', '1.2.0'
+  gem 'shoulda-matchers'
 end
 
 group :production do
