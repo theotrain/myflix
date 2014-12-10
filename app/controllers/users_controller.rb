@@ -1,15 +1,12 @@
 class UsersController < ApplicationController
   def new
-    # binding.pry
     @user = User.new
   end
 
   def create
     @user = User.new(user_params)
-    # binding.pry
     if @user.save
-      flash[:notice] = "You successfully registered, #{params[:user][:full_name]}, please sign in."
-      # session[:user_id] = @user.id
+      flash[:notice] = "You successfully registered, #{@user.full_name}, please sign in."
       redirect_to sign_in_path
     else
       render :new

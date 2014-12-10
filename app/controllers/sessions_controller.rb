@@ -4,14 +4,14 @@ class SessionsController < ApplicationController
   end
 
   def create
-    user = User.find_by(email: params[:email])
+    user = User.find_by_email(params[:email])
 
     if user && user.authenticate(params[:password])
       session[:user_id] = user.id
-      flash[:notice] = "Welcome, #{user.full_name}!"
+      flash[:notice]    = "Welcome, #{user.full_name}!"
       redirect_to home_path
     else
-      flash[:error] = "There's something wrong with your username or password"
+      flash[:error]     = "There's something wrong with your username or password"
       redirect_to sign_in_path
     end
 
@@ -19,7 +19,7 @@ class SessionsController < ApplicationController
 
   def destroy
     session[:user_id] = nil
-    flash[:notice] = "Logged out."
+    flash[:notice]    = "Logged out."
     redirect_to root_path
   end
 end

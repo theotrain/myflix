@@ -13,21 +13,7 @@ Myflix::Application.routes.draw do
       get '/search', to: "videos#search"
     end
   end
-  resources :categories
+  resources :categories, only: [:show]
   resources :users, only: [:create]
-  # resources :users
-  # resources :sessions, only: [:front]
+
 end
-
-
-
-
-# resources :todos, only: [:index] do
-#     collection do
-#         get ‘search’, to: ‘todos#search’ #/todos/search
-#     end
-
-#     member do
-#         post ‘highlight’, to: ‘todos#highlight’  #/todos/:id/highlight
-#     end
-# end

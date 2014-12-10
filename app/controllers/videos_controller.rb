@@ -2,7 +2,6 @@ class VideosController < ApplicationController
   before_action :require_user
 
   def index
-    # @videos = Video.order(:title)
     @categories = Category.all
   end
 
@@ -11,7 +10,6 @@ class VideosController < ApplicationController
   end
 
   def search
-    # binding.pry
     @videos = Video.search_by_title(params[:search])
   end
 end
