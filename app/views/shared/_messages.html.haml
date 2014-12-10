@@ -1,4 +1,14 @@
+/ - flash.each do |name, msg|
+/   %div(class="alert alert-#{name}")
+/     %a.close(data-dismiss='alert') &#215;
+/     = content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String)
 - flash.each do |name, msg|
-  %div(class="alert alert-#{name}")
-    %a.close(data-dismiss='alert') &#215;
-    = content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String)
+  - if msg.is_a?(String) 
+    %div(class="alert alert-#{name == 'notice' ? 'success' : 'danger'}")
+      %button(type="button" class="close" data-dismiss="alert")
+        %span(aria-hidden="true")
+          &times;
+        %span(class="sr-only")
+          Close
+      = content_tag :div, msg, :id => "flash_#{name}"
+
