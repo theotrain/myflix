@@ -21,3 +21,7 @@ Video.find_each do |v|
   v.category_id = 1
   v.save
 end
+
+Review.create(user_id: 1,  video_id: 8,  body: "This is the finest show ever made by grade-school animators with ALS", rating: 3)
+Review.create(user_id: 1,  video_id: 8,  body: "Respect my Authoritaaaaaaahhhhhhhh", rating: 2)
+Review.create(user_id: 1,  video_id: 8,  body: "They killed Kenny.  You Bastards! They killed Kenny.  You Bastards! They killed Kenny.  You Bastards! They killed Kenny.  You Bastards! They killed Kenny.  You Bastards! They killed Kenny.  You Bastards! ", rating: 5)
