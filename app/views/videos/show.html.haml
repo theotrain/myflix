@@ -9,8 +9,13 @@
           %span Rating: #{@video.rating_display}
         %p= @video.description
         .actions
-          %a.btn.btn-primary(href="") Watch Now
-          %a.btn.btn-default(href="") + My Queue
+          / %a.btn.btn-default(href="") + My Queue
+          = link_to "+ My Queue", add_my_queue_path(video_id: @video.id), method: :post, class: 'btn btn-default'
+          / = form_tag(add_my_queue_path, method: "post") do
+          / %a.btn.btn-primary(href="") Watch Now
+          / %input(type="hidden" name="video" value=#{@video.id})
+          / = submit_tag("+ My Queue", class: 'btn btn-default') 
+          / %a.btn.btn-default(href="") + My Queue
 
 %section.reviews.container
   .row
