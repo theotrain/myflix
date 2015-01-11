@@ -16,8 +16,7 @@ Myflix::Application.routes.draw do
   end
   resources :categories, only: [:show]
   resources :users, only: [:create]
-  # resources :queue_items, only: [:create, :show]
   get '/my_queue', to: 'queue_items#index'
-  post '/add_my_queue', to: 'queue_items#create'
+  post '/my_queue', to: 'queue_items#create'
   resources :queue_items, only: [:destroy]
 end

@@ -6,9 +6,9 @@ class QueueItemsController < ApplicationController
   end
 
   def create
-    maxOrder = QueueItem.where(user: current_user).maximum(:display_order)
-    maxOrder ? maxOrder+=1 : maxOrder=1
-    QueueItem.create(user: current_user, video_id: params[:video_id], display_order: maxOrder)
+    max_order = QueueItem.where(user: current_user).maximum(:display_order)
+    max_order ? max_order+=1 : max_order=1
+    QueueItem.create(user: current_user, video_id: params[:video_id], display_order: max_order)
     redirect_to my_queue_path
   end
 
