@@ -109,6 +109,14 @@ describe QueueItemsController do
         delete :destroy, id: queue.id
         expect(QueueItem.count).to eq(1)
       end
+      it 'normalizes the remaining queue items' do
+        queue_item1 = Fabricate(:queue_item, user: current_user, display_order: 2)
+        queue_item2 = Fabricate(:queue_item, user: current_user, display_order: 5)
+        queue_item3 = Fabricate(:queue_item, user: current_user, display_order: 10)
+        delete :destroy, id: queue_item1.id
+        expect(queue_item2.reload.display_order).to eq(1)
+        expect(queue_item3.reload.display_order).to eq(2)
+      end
     end
 
     context 'with unauthenticated users' do
@@ -118,5 +126,65 @@ describe QueueItemsController do
       end
     end
   end
+
+  describe 'POST reorder' do
+    context 'with valid inputs' do
+
+      let(:current_user) { Fabricate(:user) }
+      let(:queue_item1) { Fabricate(:queue_item, user: current_user, display_order: 1) }
+      let(:queue_item2) { Fabricate(:queue_item, user: current_user, display_order: 2) }
+      before { session[:user_id] = current_user.id }
+
+      it 'redirects to my queue page' do     
+        post :reorder, queue_items: [{id: queue_item1.id, display_order: 2}, {id: queue_item2.id, display_order: 1}]
+        expect(response).to redirect_to my_queue_path
+      end
+      it 'reorders queue items' do
+        post :reorder, queue_items: [{id: queue_item1.id, display_order: 2}, {id: queue_item2.id, display_order: 1}]
+        expect(current_user.queue_items).to eq([queue_item2, queue_item1])
+      end
+      it 'normalizes queue item numbers to start at one' do 
+        post :reorder, queue_items: [{id: queue_item1.id, display_order: 3}, {id: queue_item2.id, display_order: 2}]
+        expect(current_user.queue_items.map(&:display_order)).to eq([1,2])
+      end
+    end
+    context 'with invalid inputs' do
+
+      let(:current_user) { Fabricate(:user) }
+      let(:queue_item1) { Fabricate(:queue_item, user: current_user, display_order: 1) }
+      let(:queue_item2) { Fabricate(:queue_item, user: current_user, display_order: 2) }
+      before { session[:user_id] = current_user.id }
+
+      it 'redirects to the my queue page' do 
+        post :reorder, queue_items: [{id: queue_item1.id, display_order: 3.4}, {id: queue_item2.id, display_order: 1}]
+        expect(response).to redirect_to my_queue_path
+      end
+      it 'sets the flash error message' do 
+        post :reorder, queue_items: [{id: queue_item1.id, display_order: 3.4}, {id: queue_item2.id, display_order: 1}]
+        expect(flash[:error]).to be_present
+      end
+      it 'does not change the queue items' do 
+        post :reorder, queue_items: [{id: queue_item1.id, display_order: 2}, {id: queue_item2.id, display_order: 3.4}]
+        expect(queue_item1.reload.display_order).to eq(1)
+      end
+    end
+    context 'with unauthenticated user' do
+      it 'redirects to root_path' do 
+        post :reorder, queue_items: [{id: 1, display_order: 2}, {id: 2, display_order: 3}]
+        expect(response).to redirect_to root_path
+      end
+    end
+    context 'with queue items that dont belong to current user' do
+      it 'should not change the queue items' do
+        current_user = Fabricate(:user) 
+        session[:user_id] = current_user.id 
+        some_other_dude = Fabricate(:user) 
+        queue_item1 = Fabricate(:queue_item, user: some_other_dude, display_order: 1)
+        queue_item2 = Fabricate(:queue_item, user: some_other_dude, display_order: 2)
+        post :reorder, queue_items: [{id: queue_item1.id, display_order: 2}, {id: queue_item2.id, display_order: 1}]
+        expect(queue_item1.reload.display_order).to eq(1)
+      end
+    end
+  end  
 
 end
