@@ -19,4 +19,5 @@ Myflix::Application.routes.draw do
   get '/my_queue', to: 'queue_items#index'
   post '/my_queue', to: 'queue_items#create'
   resources :queue_items, only: [:destroy]
+  post '/reorder_queue', to: 'queue_items#reorder'
 end

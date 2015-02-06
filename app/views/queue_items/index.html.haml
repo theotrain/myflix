@@ -4,29 +4,65 @@
       %article
         %header
           %h2 My Queue
-        %table.table
-          %thead
-            %tr
-              %th(width="10%") List Order
-              %th(width="30%") Video Title
-              %th(width="10%") Play
-              %th(width="20%") Rating
-              %th(width="15%") Genre
-              %th(width="15%") Remove
-          %tbody
-            - @my_queue.each do |queue_item|
+        = form_tag reorder_queue_path do  
+          %table.table
+            %thead
               %tr
-                %td
-                  %input.form-control(type="text" value="#{queue_item.display_order}")
-                %td
-                  = link_to queue_item.video.title, queue_item.video
-                %td
-                  = button_to "Play", nil, class: "btn btn-default"
-                %td
-                  = queue_item.rating(current_user)
-                %td
-                  = link_to queue_item.video.category.name
-                %td
-                  = link_to queue_item, method: :delete do
-                    %i.glyphicon.glyphicon-remove
-        = button_to "Update Instant Queue", nil, class: "btn btn-default"
+                %th(width="10%") List Order
+                %th(width="30%") Video Title
+                %th(width="10%") Play
+                %th(width="20%") Rating
+                %th(width="15%") Genre
+                %th(width="15%") Remove
+            %tbody
+              - @my_queue.each do |queue_item|
+                %tr
+                  = hidden_field_tag "queue_items[][id]", queue_item.id
+                  %td
+                    = text_field_tag "queue_items[][display_order]", queue_item.display_order
+                  %td
+                    = link_to queue_item.video.title, queue_item.video
+                  %td
+                    = button_to "Play", nil, class: "btn btn-default"
+                  %td
+                    = select_tag "queue_items[][rating]", options_for_video_rating(queue_item.rating), include_blank: true
+                  %td
+                    = link_to queue_item.video.category.name
+                  %td
+                    = link_to queue_item, method: :delete do
+                      %i.glyphicon.glyphicon-remove
+          = submit_tag "Update Instant Queue", class: "btn btn-default"
+
+
+/ %section.my_queue.container
+/   .row
+/     .col-sm-10.col-sm-offset-1
+/       %article
+/         %header
+/           %h2 My Queue
+/         %table.table
+/           %thead
+/             %tr
+/               %th(width="10%") List Order
+/               %th(width="30%") Video Title
+/               %th(width="10%") Play
+/               %th(width="20%") Rating
+/               %th(width="15%") Genre
+/               %th(width="15%") Remove
+/           %tbody
+/             - @my_queue.each do |queue_item|
+/               %tr
+/                 %td
+/                   %input.form-control(type="text" value="#{queue_item.display_order}" id="video_#{queue_item.video.id}")
+/                 %td
+/                   = link_to queue_item.video.title, queue_item.video
+/                 %td
+/                   = button_to "Play", nil, class: "btn btn-default"
+/                 %td
+/                   = queue_item.rating(current_user)
+/                 %td
+/                   = link_to queue_item.video.category.name
+/                 %td
+/                   = link_to queue_item, method: :delete do
+/                     %i.glyphicon.glyphicon-remove
+/         = button_to "Update Instant Queue", nil, class: "btn btn-default", id: "update_instant_queue"

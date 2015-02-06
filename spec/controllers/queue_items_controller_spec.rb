@@ -4,8 +4,7 @@ describe QueueItemsController do
   describe 'GET index' do
     context 'with authenticated users' do
 
-      let(:current_user) { Fabricate(:user) }
-      before { session[:user_id] = current_user.id }
+      before {set_current_user}
 
       context 'with queue_items entries' do
         it 'sets @my_queue with multiple items in order of display_order' do
@@ -36,10 +35,10 @@ describe QueueItemsController do
         end
       end
     end
+
     context 'with unauthenticated users' do
-      it 'redirects to root path' do
-        get :index
-        expect(response).to redirect_to root_path
+      it_behaves_like 'require_sign_in' do
+        let(:action) {get :index}
       end
     end
   end
@@ -47,12 +46,10 @@ describe QueueItemsController do
   describe 'POST create' do
     context 'with authenticated users' do
 
-      let(:current_user) { Fabricate(:user) }
-      before { session[:user_id] = current_user.id }
+      before {set_current_user}
 
       it 'adds a queue_items for the passed video' do
         video = Fabricate(:video)
-        # queue = QueueItem.create(user: current_user, video: video, display_order: 10)
         post :create, video_id: video.id
         expect(QueueItem.count).to eq(1)
       end
@@ -75,11 +72,10 @@ describe QueueItemsController do
         expect(response).to redirect_to my_queue_path
       end
     end
-    context 'with un authentiocated users' do
-      it 'redirects to the home page' do 
-        video = Fabricate(:video)
-        post :create, video_id: video.id
-        expect(response).to redirect_to root_path
+    context 'with unauthenticated users' do
+
+      it_behaves_like 'require_sign_in' do
+        let(:action) { post :create, video_id: Fabricate(:video).id }
       end
     end
   end
@@ -87,8 +83,7 @@ describe QueueItemsController do
   describe 'DELETE destroy' do
     context 'with authenticated users' do
 
-      let(:current_user) { Fabricate(:user) }
-      before { session[:user_id] = current_user.id }
+      before {set_current_user}
 
       it 'redirects to queue_items#index' do 
         video = Fabricate(:video)
@@ -112,11 +107,11 @@ describe QueueItemsController do
     end
 
     context 'with unauthenticated users' do
-      it 'redirects to root path' do 
-        delete :destroy, id: 1
-        expect(response).to redirect_to root_path
+      it_behaves_like 'require_sign_in' do
+        let(:action) {delete :destroy, id: 1}
       end
     end
+
   end
 
 end

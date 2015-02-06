@@ -1,15 +1,9 @@
 require 'spec_helper'
 
- describe Category do
-#   it 'saves itself' do
-#     category = Category.new(name:'some kinda name')
-#     category.save
-#     expect(Category.first).to eq(category)
-#   end
+describe Category do
 
-it { should have_many(:videos) }
-it { should validate_presence_of(:name) }
-
+  it { should have_many(:videos) }
+  it { should validate_presence_of(:name) }
 
   describe '#recent_videos' do
 
@@ -35,7 +29,6 @@ it { should validate_presence_of(:name) }
     it 'returns all the videos if there are less than six' do
       cat = Category.create(name:'junky')
       vid = Video.create(title: "Monk3", description: "Adrian Monk is a brilliant San Francisco detective, whose obsessive compulsive disorder just happens to get in the way.", small_cover_url: "monk.jpg", large_cover_url: "monk_large.jpg", category: cat )
-      # puts "CAT VIDEOS #{cat.videos}"
       expect(cat.recent_videos).to eq([vid])
     end
 

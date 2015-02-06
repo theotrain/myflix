@@ -5,26 +5,34 @@ describe VideosController do
 
   describe "GET show" do  
 
-    it "sets the @video variable with authenticated user" do
-      session[:user_id] = Fabricate(:user).id
-      video = Fabricate(:video)
-      get :show, id: video.id
-      expect(assigns(:video)).to eq(video)
+    context 'with authenticated users' do
+
+      before { set_current_user }
+      it "sets the @video variable with authenticated user" do
+        # session[:user_id] = Fabricate(:user).id
+        video = Fabricate(:video)
+        get :show, id: video.id
+        expect(assigns(:video)).to eq(video)
+      end
+
+      it "sets @reviews for authenticated users" do
+        # session[:user_id] = Fabricate(:user).id
+        video = Fabricate(:video)
+        review1 = Fabricate(:review, video: video)
+        review2 = Fabricate(:review, video: video)
+        get :show, id: video.id
+        expect(assigns(:reviews)).to match_array([review1, review2])
+      end
     end
 
-    it "sets @reviews for authenticated users" do
-      session[:user_id] = Fabricate(:user).id
-      video = Fabricate(:video)
-      review1 = Fabricate(:review, video: video)
-      review2 = Fabricate(:review, video: video)
-      get :show, id: video.id
-      expect(assigns(:reviews)).to match_array([review1, review2])
-    end
+    # it "redirects to root_path with unauthenticated user" do
+    #   video = Fabricate(:video)
+    #   get :show, id: video.id
+    #   expect(response).to redirect_to root_path
+    # end
 
-    it "redirects to root_path with unauthenticated user" do
-      video = Fabricate(:video)
-      get :show, id: video.id
-      expect(response).to redirect_to root_path
+    it_behaves_like 'require_sign_in' do
+      let (:action) {get :show, id: Fabricate(:video).id}
     end
 
   end
