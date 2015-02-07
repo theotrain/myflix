@@ -23,4 +23,8 @@ class Video < ActiveRecord::Base
     end
   end
 
+  def inQueue?(current_user)
+    QueueItem.where(user: current_user, video_id:id).count > 0
+  end
+
 end
